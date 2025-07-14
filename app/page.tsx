@@ -1,15 +1,33 @@
-'use client'
-import React, { useState, useRef, useEffect } from 'react';
-import { Play, Pause, Plus, Trash2, Edit3, Save, X, Video, Clock, Type, Monitor, Smartphone, Upload, Star, Zap, Shield, Users } from 'lucide-react';
+"use client";
+import React, { useState, useRef, useEffect } from "react";
+import {
+  Play,
+  Pause,
+  Plus,
+  Trash2,
+  Edit3,
+  Save,
+  X,
+  Video,
+  Clock,
+  Type,
+  Monitor,
+  Smartphone,
+  Upload,
+  Star,
+  Zap,
+  Shield,
+  Users,
+} from "lucide-react";
 
 // Framer Motion alternative using CSS animations
 const motionClasses = {
-  fadeIn: 'animate-fade-in',
-  slideUp: 'animate-slide-up',
-  slideDown: 'animate-slide-down',
-  bounce: 'animate-bounce-gentle',
-  scale: 'animate-scale-in',
-  float: 'animate-float'
+  fadeIn: "animate-fade-in",
+  slideUp: "animate-slide-up",
+  slideDown: "animate-slide-down",
+  bounce: "animate-bounce-gentle",
+  scale: "animate-scale-in",
+  float: "animate-float",
 };
 
 interface Caption {
@@ -20,30 +38,32 @@ interface Caption {
 }
 
 const VideoCaptionApp: React.FC = () => {
-  const [videoUrl, setVideoUrl] = useState<string>('');
+  const [videoUrl, setVideoUrl] = useState<string>("");
   const [captions, setCaptions] = useState<Caption[]>([]);
   const [currentTime, setCurrentTime] = useState<number>(0);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [duration, setDuration] = useState<number>(0);
-  const [newCaption, setNewCaption] = useState<string>('');
-  const [startTime, setStartTime] = useState<string>('');
-  const [endTime, setEndTime] = useState<string>('');
+  const [newCaption, setNewCaption] = useState<string>("");
+  const [startTime, setStartTime] = useState<string>("");
+  const [endTime, setEndTime] = useState<string>("");
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [editText, setEditText] = useState<string>('');
+  const [editText, setEditText] = useState<string>("");
   const [activeCaption, setActiveCaption] = useState<Caption | null>(null);
   const [showForm, setShowForm] = useState<boolean>(false);
-  const [aspectRatio, setAspectRatio] = useState<'16:9' | '9:16' | 'auto'>('auto');
+  const [aspectRatio, setAspectRatio] = useState<"16:9" | "9:16" | "auto">(
+    "auto"
+  );
   const [isDragging, setIsDragging] = useState<boolean>(false);
-  const [fileName, setFileName] = useState<string>('');
+  const [fileName, setFileName] = useState<string>("");
   const [showHero, setShowHero] = useState<boolean>(true);
-  
+
   const videoRef = useRef<HTMLVideoElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const dropZoneRef = useRef<HTMLDivElement>(null);
 
   // CSS animations
   useEffect(() => {
-    const style = document.createElement('style');
+    const style = document.createElement("style");
     style.textContent = `
       @keyframes fadeIn {
         from { opacity: 0; transform: translateY(10px); }
@@ -105,9 +125,10 @@ const VideoCaptionApp: React.FC = () => {
     const updateTime = () => {
       const currentTime = video.currentTime;
       setCurrentTime(currentTime);
-      
-      const active = captions.find(caption => 
-        currentTime >= caption.startTime && currentTime <= caption.endTime
+
+      const active = captions.find(
+        (caption) =>
+          currentTime >= caption.startTime && currentTime <= caption.endTime
       );
       setActiveCaption(active || null);
     };
@@ -122,20 +143,20 @@ const VideoCaptionApp: React.FC = () => {
     const handlePause = () => setIsPlaying(false);
     const handleEnded = () => setIsPlaying(false);
 
-    video.addEventListener('timeupdate', updateTime);
-    video.addEventListener('loadedmetadata', updateDuration);
-    video.addEventListener('loadeddata', updateDuration);
-    video.addEventListener('play', handlePlay);
-    video.addEventListener('pause', handlePause);
-    video.addEventListener('ended', handleEnded);
+    video.addEventListener("timeupdate", updateTime);
+    video.addEventListener("loadedmetadata", updateDuration);
+    video.addEventListener("loadeddata", updateDuration);
+    video.addEventListener("play", handlePlay);
+    video.addEventListener("pause", handlePause);
+    video.addEventListener("ended", handleEnded);
 
     return () => {
-      video.removeEventListener('timeupdate', updateTime);
-      video.removeEventListener('loadedmetadata', updateDuration);
-      video.removeEventListener('loadeddata', updateDuration);
-      video.removeEventListener('play', handlePlay);
-      video.removeEventListener('pause', handlePause);
-      video.removeEventListener('ended', handleEnded);
+      video.removeEventListener("timeupdate", updateTime);
+      video.removeEventListener("loadedmetadata", updateDuration);
+      video.removeEventListener("loadeddata", updateDuration);
+      video.removeEventListener("play", handlePlay);
+      video.removeEventListener("pause", handlePause);
+      video.removeEventListener("ended", handleEnded);
     };
   }, [captions]);
 
@@ -159,34 +180,34 @@ const VideoCaptionApp: React.FC = () => {
     const handleDrop = (e: DragEvent) => {
       e.preventDefault();
       setIsDragging(false);
-      
+
       const files = e.dataTransfer?.files;
       if (files && files.length > 0) {
         const file = files[0];
-        if (file.type.startsWith('video/')) {
+        if (file.type.startsWith("video/")) {
           handleFileUpload(file);
         } else {
-          alert('Please upload a video file');
+          alert("Please upload a video file");
         }
       }
     };
 
-    dropZone.addEventListener('dragover', handleDragOver);
-    dropZone.addEventListener('dragleave', handleDragLeave);
-    dropZone.addEventListener('drop', handleDrop);
+    dropZone.addEventListener("dragover", handleDragOver);
+    dropZone.addEventListener("dragleave", handleDragLeave);
+    dropZone.addEventListener("drop", handleDrop);
 
     return () => {
-      dropZone.removeEventListener('dragover', handleDragOver);
-      dropZone.removeEventListener('dragleave', handleDragLeave);
-      dropZone.removeEventListener('drop', handleDrop);
+      dropZone.removeEventListener("dragover", handleDragOver);
+      dropZone.removeEventListener("dragleave", handleDragLeave);
+      dropZone.removeEventListener("drop", handleDrop);
     };
   }, []);
 
   const handleFileUpload = (file: File) => {
-    if (videoUrl && videoUrl.startsWith('blob:')) {
+    if (videoUrl && videoUrl.startsWith("blob:")) {
       URL.revokeObjectURL(videoUrl);
     }
-    
+
     const url = URL.createObjectURL(file);
     setVideoUrl(url);
     setFileName(file.name);
@@ -220,7 +241,7 @@ const VideoCaptionApp: React.FC = () => {
         setIsPlaying(true);
       }
     } catch (error) {
-      console.error('Error playing video:', error);
+      console.error("Error playing video:", error);
       setIsPlaying(false);
     }
   };
@@ -249,7 +270,7 @@ const VideoCaptionApp: React.FC = () => {
     const end = parseFloat(endTime);
 
     if (start >= end) {
-      alert('Start time must be less than end time');
+      alert("Start time must be less than end time");
       return;
     }
 
@@ -260,15 +281,17 @@ const VideoCaptionApp: React.FC = () => {
       endTime: end,
     };
 
-    setCaptions([...captions, caption].sort((a, b) => a.startTime - b.startTime));
-    setNewCaption('');
-    setStartTime('');
-    setEndTime('');
+    setCaptions(
+      [...captions, caption].sort((a, b) => a.startTime - b.startTime)
+    );
+    setNewCaption("");
+    setStartTime("");
+    setEndTime("");
     setShowForm(false);
   };
 
   const deleteCaption = (id: string) => {
-    setCaptions(captions.filter(caption => caption.id !== id));
+    setCaptions(captions.filter((caption) => caption.id !== id));
   };
 
   const startEditing = (caption: Caption) => {
@@ -279,24 +302,28 @@ const VideoCaptionApp: React.FC = () => {
   const saveEdit = () => {
     if (!editingId || !editText.trim()) return;
 
-    setCaptions(captions.map(caption => 
-      caption.id === editingId 
-        ? { ...caption, text: editText.trim() }
-        : caption
-    ));
+    setCaptions(
+      captions.map((caption) =>
+        caption.id === editingId
+          ? { ...caption, text: editText.trim() }
+          : caption
+      )
+    );
     setEditingId(null);
-    setEditText('');
+    setEditText("");
   };
 
   const cancelEdit = () => {
     setEditingId(null);
-    setEditText('');
+    setEditText("");
   };
 
   const formatTime = (seconds: number): string => {
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    return `${mins.toString().padStart(2, "0")}:${secs
+      .toString()
+      .padStart(2, "0")}`;
   };
 
   const jumpToCaption = (startTime: number) => {
@@ -307,34 +334,47 @@ const VideoCaptionApp: React.FC = () => {
       video.currentTime = startTime;
       setCurrentTime(startTime);
     } catch (error) {
-      console.error('Error jumping to caption:', error);
+      console.error("Error jumping to caption:", error);
     }
   };
 
   const getVideoContainerStyle = () => {
     switch (aspectRatio) {
-      case '16:9':
-        return 'aspect-video max-w-full';
-      case '9:16':
-        return 'aspect-[9/16] max-w-sm mx-auto';
+      case "16:9":
+        return "aspect-video max-w-full";
+      case "9:16":
+        return "aspect-[9/16] max-w-sm mx-auto";
       default:
-        return 'max-h-[600px]';
+        return "max-h-[600px]";
     }
   };
 
   const getVideoStyle = () => {
     switch (aspectRatio) {
-      case '16:9':
-        return 'w-full h-full object-cover';
-      case '9:16':
-        return 'w-full h-full object-cover';
+      case "16:9":
+        return "w-full h-full object-cover";
+      case "9:16":
+        return "w-full h-full object-cover";
       default:
-        return 'w-full h-full max-h-[600px] object-contain';
+        return "w-full h-full max-h-[600px] object-contain";
     }
   };
 
-  const FeatureCard = ({ icon: Icon, title, description, delay = 0 }: { icon: any, title: string, description: string, delay?: number }) => (
-    <div className={`glass-effect rounded-2xl p-6 ${motionClasses.fadeIn} hover:glow-effect transition-all duration-300 transform hover:scale-105`} style={{ animationDelay: `${delay}s` }}>
+  const FeatureCard = ({
+    icon: Icon,
+    title,
+    description,
+    delay = 0,
+  }: {
+    icon: any;
+    title: string;
+    description: string;
+    delay?: number;
+  }) => (
+    <div
+      className={`glass-effect rounded-2xl p-6 ${motionClasses.fadeIn} hover:glow-effect transition-all duration-300 transform hover:scale-105`}
+      style={{ animationDelay: `${delay}s` }}
+    >
       <div className="flex items-center space-x-3 mb-4">
         <div className="p-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl">
           <Icon className="w-6 h-6 text-white" />
@@ -347,20 +387,28 @@ const VideoCaptionApp: React.FC = () => {
 
   if (showHero) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white overflow-hidden">
+      <div className="min-h-screen bg-slate-900 text-white overflow-hidden">
         {/* Animated background elements */}
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-600 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-float"></div>
-          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-pink-600 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-float" style={{ animationDelay: '2s' }}></div>
-          <div className="absolute top-40 left-40 w-80 h-80 bg-blue-600 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-float" style={{ animationDelay: '4s' }}></div>
+          <div
+            className="absolute -bottom-40 -left-40 w-80 h-80 bg-pink-600 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-float"
+            style={{ animationDelay: "2s" }}
+          ></div>
+          <div
+            className="absolute top-40 left-40 w-80 h-80 bg-blue-600 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-float"
+            style={{ animationDelay: "4s" }}
+          ></div>
         </div>
 
         <div className="relative z-10">
           {/* Header */}
           <header className="container mx-auto px-4 py-6">
-            <nav className={`flex items-center justify-between ${motionClasses.slideDown}`}>
+            <nav
+              className={`flex items-center justify-between ${motionClasses.slideDown}`}
+            >
               <div className="flex items-center space-x-2">
-                <div className="p-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl">
+                <div className="p-2 bg-blue-600 rounded-xl">
                   <Video className="w-8 h-8 text-white" />
                 </div>
                 <span className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
@@ -368,8 +416,13 @@ const VideoCaptionApp: React.FC = () => {
                 </span>
               </div>
               <div className="hidden md:flex items-center space-x-8">
-                <a href="#features" className="text-slate-300 hover:text-white transition-colors">Features</a>
-                <button className="px-6 py-2 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full hover:from-purple-700 hover:to-pink-700 transition-all duration-300 transform hover:scale-105">
+                <a
+                  href="#features"
+                  className="text-slate-300 hover:text-white transition-colors"
+                >
+                  Features
+                </a>
+                <button className="px-6 py-2 bg-blue-600 hover:bg-blue-700 rounded-full transition-all duration-300 transform hover:scale-105 cursor-pointer">
                   Get Started
                 </button>
               </div>
@@ -383,29 +436,38 @@ const VideoCaptionApp: React.FC = () => {
                 Create Stunning Video Captions
               </h1>
               <p className="text-xl md:text-2xl text-slate-300 mb-12 leading-relaxed">
-                Transform your videos with professional captions. Easy to use, powerful features, and stunning results.
+                Transform your videos with professional captions. Easy to use,
+                powerful features, and stunning results.
               </p>
-              
+
               {/* Upload Drop Zone */}
-              <div 
+              <div
                 ref={dropZoneRef}
                 className={`relative max-w-2xl mx-auto mb-16 ${motionClasses.slideUp}`}
               >
-                <div className={`glass-effect rounded-3xl p-12 border-2 border-dashed transition-all duration-300 ${
-                  isDragging ? 'border-purple-400 glow-effect' : 'border-slate-600'
-                }`}>
+                <div
+                  className={`glass-effect rounded-3xl p-12 border-2 border-dashed transition-all duration-300 ${
+                    isDragging
+                      ? "border-purple-400 glow-effect"
+                      : "border-slate-600"
+                  }`}
+                >
                   <div className="flex flex-col items-center space-y-6">
-                    <div className={`p-6 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full ${motionClasses.bounce}`}>
+                    <div
+                      className={`p-6 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full ${motionClasses.bounce}`}
+                    >
                       <Upload className="w-12 h-12 text-white" />
                     </div>
                     <div className="text-center">
-                      <h3 className="text-2xl font-semibold mb-2">Upload Your Video</h3>
+                      <h3 className="text-2xl font-semibold mb-2">
+                        Upload Your Video
+                      </h3>
                       <p className="text-slate-400 mb-6">
                         Drag and drop your video file here, or click to browse
                       </p>
                       <button
                         onClick={() => fileInputRef.current?.click()}
-                        className="px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full hover:from-purple-700 hover:to-pink-700 transition-all duration-300 transform hover:scale-105 font-semibold text-lg"
+                        className="px-8 py-4 bg-blue-600 hover:bg-blue-700 rounded-full transition-all duration-300 transform hover:scale-105 font-semibold text-lg cursor-pointer"
                       >
                         Choose Video File
                       </button>
@@ -413,7 +475,10 @@ const VideoCaptionApp: React.FC = () => {
                         ref={fileInputRef}
                         type="file"
                         accept="video/*"
-                        onChange={(e) => e.target.files?.[0] && handleFileUpload(e.target.files[0])}
+                        onChange={(e) =>
+                          e.target.files?.[0] &&
+                          handleFileUpload(e.target.files[0])
+                        }
                         className="hidden"
                       />
                     </div>
@@ -446,46 +511,50 @@ const VideoCaptionApp: React.FC = () => {
           {/* Features Section */}
           <section id="features" className="container mx-auto px-4 py-20">
             <div className="text-center mb-16">
-              <h2 className={`text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent ${motionClasses.fadeIn}`}>
+              <h2
+                className={`text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent ${motionClasses.fadeIn}`}
+              >
                 Powerful Features
               </h2>
-              <p className={`text-xl text-slate-300 max-w-2xl mx-auto ${motionClasses.fadeIn}`}>
+              <p
+                className={`text-xl text-slate-300 max-w-2xl mx-auto ${motionClasses.fadeIn}`}
+              >
                 Everything you need to create professional video captions
               </p>
             </div>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              <FeatureCard 
+              <FeatureCard
                 icon={Zap}
                 title="Lightning Fast"
                 description="Process videos in seconds with our optimized engine. No waiting, just results."
                 delay={0.1}
               />
-              <FeatureCard 
+              <FeatureCard
                 icon={Type}
                 title="Smart Captions"
                 description="AI-powered caption suggestions and auto-timing for perfect synchronization."
                 delay={0.2}
               />
-              <FeatureCard 
+              <FeatureCard
                 icon={Monitor}
                 title="Multi-Format"
                 description="Support for all video formats and aspect ratios. Perfect for any platform."
                 delay={0.3}
               />
-              <FeatureCard 
+              <FeatureCard
                 icon={Shield}
                 title="Secure & Private"
                 description="Your videos are processed securely and never stored on our servers."
                 delay={0.4}
               />
-              <FeatureCard 
+              <FeatureCard
                 icon={Users}
                 title="Team Collaboration"
                 description="Work together with your team on caption projects with real-time sync."
                 delay={0.5}
               />
-              <FeatureCard 
+              <FeatureCard
                 icon={Star}
                 title="Export Options"
                 description="Export to SRT, VTT, or burn captions directly into your video file."
@@ -496,16 +565,19 @@ const VideoCaptionApp: React.FC = () => {
 
           {/* CTA Section */}
           <section className="container mx-auto px-4 py-20 text-center">
-            <div className={`glass-effect rounded-3xl p-12 max-w-4xl mx-auto ${motionClasses.slideUp}`}>
+            <div
+              className={`glass-effect rounded-3xl p-12 max-w-4xl mx-auto ${motionClasses.slideUp}`}
+            >
               <h2 className="text-4xl font-bold mb-6 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
                 Ready to Get Started?
               </h2>
               <p className="text-xl text-slate-300 mb-8">
-                Join thousands of creators who trust CaptionStudio for their video captions.
+                Join thousands of creators who trust CaptionStudio for their
+                video captions.
               </p>
               <button
                 onClick={() => fileInputRef.current?.click()}
-                className="px-12 py-4 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full hover:from-purple-700 hover:to-pink-700 transition-all duration-300 transform hover:scale-105 font-semibold text-lg"
+                className="px-12 py-4 bg-blue-600 hover:bg-blue-700 rounded-full transition-all duration-300 transform hover:scale-105 font-semibold text-lg"
               >
                 Upload Your First Video
               </button>
@@ -517,12 +589,14 @@ const VideoCaptionApp: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white">
+    <div className="min-h-screen bg-slate-900 text-white">
       {/* Header */}
       <header className="container mx-auto px-4 py-6">
-        <nav className={`flex items-center justify-between ${motionClasses.slideDown}`}>
+        <nav
+          className={`flex items-center justify-between ${motionClasses.slideDown}`}
+        >
           <div className="flex items-center space-x-2">
-            <div className="p-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl">
+            <div className="p-2 bg-blue-600 rounded-xl">
               <Video className="w-8 h-8 text-white" />
             </div>
             <span className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
@@ -534,8 +608,8 @@ const VideoCaptionApp: React.FC = () => {
             <button
               onClick={() => {
                 setShowHero(true);
-                setVideoUrl('');
-                setFileName('');
+                setVideoUrl("");
+                setFileName("");
                 setCaptions([]);
               }}
               className="px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg transition-colors"
@@ -548,43 +622,55 @@ const VideoCaptionApp: React.FC = () => {
 
       <div className="container mx-auto px-4 pb-8">
         {videoUrl && (
-          <div className={`grid gap-6 ${aspectRatio === '9:16' ? 'grid-cols-1' : 'grid-cols-1 lg:grid-cols-3'} ${motionClasses.fadeIn}`}>
+          <div
+            className={`grid gap-6 ${
+              aspectRatio === "9:16"
+                ? "grid-cols-1"
+                : "grid-cols-1 lg:grid-cols-3"
+            } ${motionClasses.fadeIn}`}
+          >
             {/* Video Player */}
-            <div className={aspectRatio === '9:16' ? 'mx-auto' : 'lg:col-span-2'}>
-              <div className={`glass-effect rounded-2xl p-6 h-fit flex flex-col ${motionClasses.slideUp}`}>
+            <div
+              className={aspectRatio === "9:16" ? "mx-auto" : "lg:col-span-2"}
+            >
+              <div
+                className={`glass-effect rounded-2xl p-6 h-fit flex flex-col ${motionClasses.slideUp}`}
+              >
                 {/* Aspect Ratio Controls */}
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-xl font-semibold">Video Preview</h2>
+                  <h2 className="md:text-xl text-[0.8rem] font-semibold">
+                    Video Preview
+                  </h2>
                   <div className="flex items-center space-x-2">
                     <span className="text-sm text-slate-400">Display:</span>
                     <div className="flex bg-slate-700 rounded-lg p-1">
                       <button
-                        onClick={() => setAspectRatio('auto')}
+                        onClick={() => setAspectRatio("auto")}
                         className={`px-3 py-1 rounded text-sm transition-all ${
-                          aspectRatio === 'auto' 
-                            ? 'bg-purple-600 text-white' 
-                            : 'text-slate-300 hover:text-white'
+                          aspectRatio === "auto"
+                            ? "bg-purple-600 text-white"
+                            : "text-slate-300 hover:text-white"
                         }`}
                       >
                         Auto
                       </button>
                       <button
-                        onClick={() => setAspectRatio('16:9')}
+                        onClick={() => setAspectRatio("16:9")}
                         className={`px-3 py-1 rounded text-sm transition-all flex items-center space-x-1 ${
-                          aspectRatio === '16:9' 
-                            ? 'bg-purple-600 text-white' 
-                            : 'text-slate-300 hover:text-white'
+                          aspectRatio === "16:9"
+                            ? "bg-purple-600 text-white"
+                            : "text-slate-300 hover:text-white"
                         }`}
                       >
                         <Monitor className="w-3 h-3" />
                         <span>16:9</span>
                       </button>
                       <button
-                        onClick={() => setAspectRatio('9:16')}
+                        onClick={() => setAspectRatio("9:16")}
                         className={`px-3 py-1 rounded text-sm transition-all flex items-center space-x-1 ${
-                          aspectRatio === '9:16' 
-                            ? 'bg-purple-600 text-white' 
-                            : 'text-slate-300 hover:text-white'
+                          aspectRatio === "9:16"
+                            ? "bg-purple-600 text-white"
+                            : "text-slate-300 hover:text-white"
                         }`}
                       >
                         <Smartphone className="w-3 h-3" />
@@ -595,22 +681,28 @@ const VideoCaptionApp: React.FC = () => {
                 </div>
 
                 <div className="relative flex items-center justify-center">
-                  <div className={`relative ${getVideoContainerStyle()}`}>
+                  <div
+                    className={`relative w-full max-w-full sm:${getVideoContainerStyle()} mx-auto`}
+                  >
                     <video
                       ref={videoRef}
                       src={videoUrl}
                       onLoadedMetadata={handleVideoLoad}
                       onLoadedData={handleVideoLoad}
-                      className={`rounded-lg ${getVideoStyle()}`}
+                      className="w-full h-auto max-h-[40vh] sm:max-h-[600px] object-contain rounded-lg"
                       preload="metadata"
                       controls={false}
                     />
-                    
+
                     {/* Caption Overlay */}
                     {activeCaption && (
-                      <div className={`absolute inset-0 flex items-end justify-center pb-8 pointer-events-none ${motionClasses.fadeIn}`}>
-                        <div className="bg-black/90 text-white px-6 py-3 rounded-lg text-center max-w-[80%] mx-4 backdrop-blur-sm">
-                          <p className="text-lg font-medium leading-relaxed">{activeCaption.text}</p>
+                      <div
+                        className={`absolute inset-0 flex items-end justify-center pb-8 pointer-events-none ${motionClasses.fadeIn}`}
+                      >
+                        <div className="bg-black/90 text-white px-3 py-2 rounded-lg text-center max-w-[90vw] sm:max-w-[80%] mx-2 sm:mx-4 backdrop-blur-sm break-words">
+                          <p className="text-base sm:text-lg font-medium leading-relaxed break-words">
+                            {activeCaption.text}
+                          </p>
                         </div>
                       </div>
                     )}
@@ -624,7 +716,11 @@ const VideoCaptionApp: React.FC = () => {
                       onClick={handlePlayPause}
                       className="p-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 rounded-full transition-all duration-300 transform hover:scale-105"
                     >
-                      {isPlaying ? <Pause className="w-6 h-6" /> : <Play className="w-6 h-6" />}
+                      {isPlaying ? (
+                        <Pause className="w-6 h-6" />
+                      ) : (
+                        <Play className="w-6 h-6" />
+                      )}
                     </button>
                     <div className="flex-1">
                       <input
@@ -635,7 +731,11 @@ const VideoCaptionApp: React.FC = () => {
                         onChange={handleSeek}
                         className="w-full h-2 bg-slate-600 rounded-lg appearance-none cursor-pointer"
                         style={{
-                          background: `linear-gradient(to right, #8b5cf6 0%, #8b5cf6 ${(currentTime / duration) * 100}%, #475569 ${(currentTime / duration) * 100}%, #475569 100%)`
+                          background: `linear-gradient(to right, #8b5cf6 0%, #8b5cf6 ${
+                            (currentTime / duration) * 100
+                          }%, #475569 ${
+                            (currentTime / duration) * 100
+                          }%, #475569 100%)`,
                         }}
                       />
                     </div>
@@ -648,9 +748,15 @@ const VideoCaptionApp: React.FC = () => {
             </div>
 
             {/* Caption Controls */}
-            <div className={`space-y-6 h-fit flex flex-col ${aspectRatio === '9:16' ? 'mt-8' : 'lg:h-[800px]'}`}>
+            <div
+              className={`space-y-6 h-fit flex flex-col ${
+                aspectRatio === "9:16" ? "mt-8" : "lg:h-[800px]"
+              }`}
+            >
               {/* Add Caption Form */}
-              <div className={`glass-effect rounded-2xl p-6 flex-shrink-0 ${motionClasses.slideUp}`}>
+              <div
+                className={`glass-effect rounded-2xl p-6 flex-shrink-0 ${motionClasses.slideUp}`}
+              >
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-xl font-semibold flex items-center space-x-2">
                     <Type className="w-5 h-5" />
@@ -658,7 +764,7 @@ const VideoCaptionApp: React.FC = () => {
                   </h3>
                   <button
                     onClick={() => setShowForm(!showForm)}
-                    className="p-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 rounded-lg transition-all duration-300 transform hover:scale-105"
+                    className="p-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-all duration-300 transform hover:scale-105"
                   >
                     <Plus className="w-4 h-4" />
                   </button>
@@ -729,7 +835,7 @@ const VideoCaptionApp: React.FC = () => {
 
                     <button
                       onClick={addCaption}
-                      className="w-full px-4 py-3 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 rounded-lg transition-all duration-300 transform hover:scale-105 font-medium"
+                      className="w-full px-4 py-3 bg-green-600 hover:bg-green-700 rounded-lg transition-all duration-300 transform hover:scale-105 font-medium"
                     >
                       Add Caption
                     </button>
@@ -738,24 +844,32 @@ const VideoCaptionApp: React.FC = () => {
               </div>
 
               {/* Caption List */}
-              <div className={`glass-effect rounded-2xl p-6 flex-1 flex flex-col min-h-0 ${motionClasses.slideUp}`}>
+              <div
+                className={`glass-effect rounded-2xl p-6 flex-1 flex flex-col min-h-0 ${motionClasses.slideUp}`}
+              >
                 <div className="flex items-center justify-between mb-4 flex-shrink-0">
-                  <h3 className="text-xl font-semibold">Captions ({captions.length})</h3>
+                  <h3 className="text-xl font-semibold">
+                    Captions ({captions.length})
+                  </h3>
                   {captions.length > 0 && (
-                    <button className="px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 rounded-lg transition-all duration-300 transform hover:scale-105 text-sm">
+                    <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-all duration-300 transform hover:scale-105 text-sm">
                       Export SRT
                     </button>
                   )}
                 </div>
-                
+
                 <div className="space-y-3 overflow-y-auto flex-1 custom-scrollbar">
                   {captions.length === 0 ? (
                     <div className="text-center py-12">
                       <div className="p-4 bg-slate-700/30 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
                         <Type className="w-8 h-8 text-slate-400" />
                       </div>
-                      <p className="text-slate-400 text-lg mb-2">No captions yet</p>
-                      <p className="text-slate-500 text-sm">Start adding captions to see them here!</p>
+                      <p className="text-slate-400 text-lg mb-2">
+                        No captions yet
+                      </p>
+                      <p className="text-slate-500 text-sm">
+                        Start adding captions to see them here!
+                      </p>
                     </div>
                   ) : (
                     captions.map((caption, index) => (
@@ -763,8 +877,8 @@ const VideoCaptionApp: React.FC = () => {
                         key={caption.id}
                         className={`p-4 rounded-xl border transition-all duration-300 transform hover:scale-[1.02] ${
                           activeCaption?.id === caption.id
-                            ? 'bg-gradient-to-r from-purple-600/20 to-pink-600/20 border-purple-500 glow-effect'
-                            : 'bg-slate-700/30 border-slate-600 hover:border-slate-500'
+                            ? "bg-gradient-to-r from-purple-600/20 to-pink-600/20 border-purple-500 glow-effect"
+                            : "bg-slate-700/30 border-slate-600 hover:border-slate-500"
                         } ${motionClasses.fadeIn}`}
                         style={{ animationDelay: `${index * 0.1}s` }}
                       >
@@ -773,7 +887,8 @@ const VideoCaptionApp: React.FC = () => {
                             onClick={() => jumpToCaption(caption.startTime)}
                             className="text-sm text-purple-400 hover:text-purple-300 transition-colors font-medium"
                           >
-                            {formatTime(caption.startTime)} - {formatTime(caption.endTime)}
+                            {formatTime(caption.startTime)} -{" "}
+                            {formatTime(caption.endTime)}
                           </button>
                           <div className="flex space-x-2">
                             <button
@@ -790,7 +905,7 @@ const VideoCaptionApp: React.FC = () => {
                             </button>
                           </div>
                         </div>
-                        
+
                         {editingId === caption.id ? (
                           <div className="space-y-2">
                             <textarea
@@ -815,7 +930,9 @@ const VideoCaptionApp: React.FC = () => {
                             </div>
                           </div>
                         ) : (
-                          <p className="text-slate-200 leading-relaxed">{caption.text}</p>
+                          <p className="text-slate-200 leading-relaxed">
+                            {caption.text}
+                          </p>
                         )}
                       </div>
                     ))
